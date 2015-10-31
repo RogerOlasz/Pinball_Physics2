@@ -78,7 +78,7 @@ update_status ModulePhysics::PreUpdate()
 PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	body.type = b2_dynamicBody; // b2_staticBody
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -99,48 +99,77 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	return pbody;
 }
 
-//void ModulePhysics::DestroyBody(PhysBody* body)
-//{
-//	assert(body);
-//	bodies.del(bodies.findNode(body));
-//	delete body;
-//}
 
-void ModulePhysics::CreateRevoluteJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int max_angle, int min_angle)
+
+void ModulePhysics::CreatePrismaticJoint(int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis)
 {
-	b2RevoluteJointDef def;
+	b2PrismaticJointDef def;
 
-	def.bodyA = body_1->body;
-	def.bodyB = body_2->body;
+	//Circle
+	b2BodyDef body;
+	body.type = b2_staticBody; 
+	body.position.Set(PIXEL_TO_METERS(SCREEN_WIDTH / 2), PIXEL_TO_METERS(SCREEN_HEIGHT / 2));
+
+	b2Body* b = world->CreateBody(&body);
+
+	b2CircleShape shape;
+	shape.m_radius = PIXEL_TO_METERS(6);
+
+	b2FixtureDef fixture;
+	fixture.shape = &shape;
+	fixture.density = 1.0f;
+
+	b->CreateFixture(&fixture);
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	b->SetUserData(pbody);
+	pbody->width = pbody->height = 6;
+
+	//Rectangle
+	b2BodyDef body2;
+	body2.type = b2_dynamicBody;
+	body2.position.Set(PIXEL_TO_METERS(SCREEN_WIDTH / 2), PIXEL_TO_METERS((SCREEN_HEIGHT / 2)));
+
+	b2Body* b2 = world->CreateBody(&body2);
+
+	b2PolygonShape box;
+	box.SetAsBox(PIXEL_TO_METERS(26) * 0.5f, PIXEL_TO_METERS(52) * 0.5f);
+
+	b2FixtureDef fixture2;
+	fixture2.shape = &box;
+	fixture2.density = 1.0f;
+
+	b2->CreateFixture(&fixture2);
+
+	PhysBody* pbody2 = new PhysBody();
+	pbody2->body = b2;
+	b2->SetUserData(pbody2);
+	pbody2->width = 26 * 0.5f;
+	pbody2->height = 52 * 0.5f;
+
+	//Joint creation
+	def.bodyA = pbody->body;
+	def.bodyB = pbody2->body;
+	def.collideConnected = false;
+
+	def.localAxisA.Set(PIXEL_TO_METERS(x_axis), PIXEL_TO_METERS(y_axis));
 
 	def.localAnchorA.Set(PIXEL_TO_METERS(x_pivot_1), PIXEL_TO_METERS(y_pivot_1));
 	def.localAnchorB.Set(PIXEL_TO_METERS(x_pivot_2), PIXEL_TO_METERS(y_pivot_2));
 
-	if (max_angle != INT_MAX && min_angle != INT_MIN)
-	{
-		def.enableLimit = true;
-		def.upperAngle = DEGTORAD * max_angle;
-		def.lowerAngle = DEGTORAD * min_angle;
-	}
+	def.enableLimit = true;
+	def.upperTranslation = PIXEL_TO_METERS(50);
+	def.lowerTranslation = PIXEL_TO_METERS(-50);
+	
+	def.enableMotor = true;
+	def.maxMotorForce = 500;
+	def.motorSpeed = PIXEL_TO_METERS(-200);
 
-	world->CreateJoint(&def);
+	(b2PrismaticJoint*)world->CreateJoint(&def);
 }
 
-void ModulePhysics::CreateLineJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, float frequency, float damping)
-{
-	b2DistanceJointDef def;
 
-	def.bodyA = body_1->body;
-	def.bodyB = body_2->body;
-
-	def.localAnchorA.Set(PIXEL_TO_METERS(x_pivot_1), PIXEL_TO_METERS(y_pivot_1));
-	def.localAnchorB.Set(PIXEL_TO_METERS(x_pivot_2), PIXEL_TO_METERS(y_pivot_2));
-
-	def.dampingRatio = damping; // 0 ... 1
-	def.frequencyHz = frequency; // < 30.0f
-
-	world->CreateJoint(&def);
-}
 
 PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
 {

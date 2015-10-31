@@ -27,7 +27,7 @@ bool ModuleSceneIntro::Start()
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 
 	circle = App->textures->Load("pinball/ball.png"); 
-	//box = App->textures->Load("pinball/crate.png");
+	box = App->textures->Load("pinball/crate.png");
 	flipper = App->textures->Load("pinball/flipper.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 	img = App->textures->Load("pinball/Tablero_Pinball.png");
@@ -48,6 +48,8 @@ bool ModuleSceneIntro::Start()
 	board.add(App->physics->CreateBoard(0, 0, Rectangle13, 24));
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 10);
+
+	App->physics->CreatePrismaticJoint(0, 0, 0, 0, 0, 1);
 
 	return ret;
 }
@@ -80,6 +82,11 @@ update_status ModuleSceneIntro::Update()
 	{
 		boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
 	}	
+
+	if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
+	{
+		App->physics->
+	}
 	
 	
 	App->renderer->Blit(img, 0, 0);
