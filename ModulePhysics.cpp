@@ -99,8 +99,6 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	return pbody;
 }
 
-
-
 void ModulePhysics::CreatePrismaticJoint(int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis)
 {
 	b2PrismaticJointDef def;
@@ -166,10 +164,17 @@ void ModulePhysics::CreatePrismaticJoint(int x_pivot_1, int y_pivot_1, int x_piv
 	def.maxMotorForce = 500;
 	def.motorSpeed = PIXEL_TO_METERS(-200);
 
+	bodies.add(pbody2);
+
 	(b2PrismaticJoint*)world->CreateJoint(&def);
 }
 
+void ModulePhysics::ApplyForceJ(int force)
+{
+	b2Vec2 forcev(0, force);
 
+	bodies.getFirst()->data->body->ApplyForce(forcev, bodies.getFirst()->data->body->GetWorldCenter(),true);
+}
 
 PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
 {

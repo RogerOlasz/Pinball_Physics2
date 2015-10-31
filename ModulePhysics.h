@@ -52,11 +52,12 @@ public:
 	void BeginContact(b2Contact* contact);
 
 	void CreatePrismaticJoint(int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis);
-	void ApplyForce(int force);
+	void ApplyForceJ(int force);
 
 private:
 
 	bool debug;
+	p2List<PhysBody*> bodies;
 	b2World* world;
 	b2MouseJoint* mouse_joint;
 	b2Body* ground;

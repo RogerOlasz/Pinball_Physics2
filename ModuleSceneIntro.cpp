@@ -83,9 +83,10 @@ update_status ModuleSceneIntro::Update()
 		boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
 	}	
 
-	if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_3) == KEY_REPEAT)
 	{
-		App->physics->
+		LOG("Appling force")
+		App->physics->ApplyForceJ(-600);
 	}
 	
 	
