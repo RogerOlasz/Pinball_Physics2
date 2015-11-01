@@ -121,7 +121,7 @@ void ModulePhysics::CreateDistanceJoint(PhysBody* body_1, PhysBody* body_2, int 
 	def.bodyA = body_1->body;
 	def.bodyB = body_2->body;
 	def.collideConnected = false;
-	def.length = 0.f;
+	def.length = PIXEL_TO_METERS(0.f);
 
 	def.localAnchorA.Set(PIXEL_TO_METERS(x_pivot_1), PIXEL_TO_METERS(y_pivot_1));
 	def.localAnchorB.Set(PIXEL_TO_METERS(x_pivot_2), PIXEL_TO_METERS(y_pivot_2));

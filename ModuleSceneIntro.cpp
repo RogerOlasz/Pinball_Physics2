@@ -49,6 +49,8 @@ bool ModuleSceneIntro::Start()
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 10);
 
+	circles.add(App->physics->CreateCircle(b_dynamic, 477, 680, 10));
+
 	anc_c = App->physics->CreateCircle(b_static, 483, 699, 4);
 	box_t = App->physics->CreateRectangle(b_dynamic, 477, 685, 13, 28);
 	App->physics->CreatePrismaticJoint(anc_c, box_t, 0, 0, 0, 0, 0, -1);
@@ -87,9 +89,14 @@ update_status ModuleSceneIntro::Update()
 		boxes.add(App->physics->CreateRectangle(b_dynamic, App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
 	}	
 
+	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+	{
+		circles.getFirst()->data->body->ApplyForceToCenter(b2Vec2(0, -200), true);
+	}
+
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		spring_push += 60.f;
+		spring_push += 70.f;
 		box_t->body->ApplyForceToCenter(b2Vec2(0, spring_push), true);
 	}
 	else
@@ -107,8 +114,6 @@ update_status ModuleSceneIntro::Update()
 	int ray_hit = ray.DistanceTo(mouse);
 
 	fVector normal(0.0f, 0.0f);
-
-
 
 	// All draw functions ------------------------------------------------------
 	
