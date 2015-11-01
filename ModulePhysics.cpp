@@ -75,10 +75,25 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
+PhysBody* ModulePhysics::CreateCircle(body_type type, int x, int y, int radius)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody; // b2_staticBody
+
+	switch (type)
+	{
+	case b_static:
+		body.type = b2_staticBody;
+		break;
+
+	case b_kinematic:
+		body.type = b2_kinematicBody;
+		break;
+
+	default:
+		body.type = b2_dynamicBody;
+		break;
+	}
+
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);
@@ -99,56 +114,13 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	return pbody;
 }
 
-void ModulePhysics::CreatePrismaticJoint(int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis)
+void ModulePhysics::CreatePrismaticJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis)
 {
 	b2PrismaticJointDef def;
 
-	//Circle
-	b2BodyDef body;
-	body.type = b2_staticBody; 
-	body.position.Set(PIXEL_TO_METERS(SCREEN_WIDTH / 2), PIXEL_TO_METERS(SCREEN_HEIGHT / 2));
-
-	b2Body* b = world->CreateBody(&body);
-
-	b2CircleShape shape;
-	shape.m_radius = PIXEL_TO_METERS(6);
-
-	b2FixtureDef fixture;
-	fixture.shape = &shape;
-	fixture.density = 1.0f;
-
-	b->CreateFixture(&fixture);
-
-	PhysBody* pbody = new PhysBody();
-	pbody->body = b;
-	b->SetUserData(pbody);
-	pbody->width = pbody->height = 6;
-
-	//Rectangle
-	b2BodyDef body2;
-	body2.type = b2_dynamicBody;
-	body2.position.Set(PIXEL_TO_METERS(SCREEN_WIDTH / 2), PIXEL_TO_METERS((SCREEN_HEIGHT / 2)));
-
-	b2Body* b2 = world->CreateBody(&body2);
-
-	b2PolygonShape box;
-	box.SetAsBox(PIXEL_TO_METERS(26) * 0.5f, PIXEL_TO_METERS(52) * 0.5f);
-
-	b2FixtureDef fixture2;
-	fixture2.shape = &box;
-	fixture2.density = 1.0f;
-
-	b2->CreateFixture(&fixture2);
-
-	PhysBody* pbody2 = new PhysBody();
-	pbody2->body = b2;
-	b2->SetUserData(pbody2);
-	pbody2->width = 26 * 0.5f;
-	pbody2->height = 52 * 0.5f;
-
 	//Joint creation
-	def.bodyA = pbody->body;
-	def.bodyB = pbody2->body;
+	def.bodyA = body_1->body;
+	def.bodyB = body_2->body;
 	def.collideConnected = false;
 
 	def.localAxisA.Set(PIXEL_TO_METERS(x_axis), PIXEL_TO_METERS(y_axis));
@@ -161,25 +133,31 @@ void ModulePhysics::CreatePrismaticJoint(int x_pivot_1, int y_pivot_1, int x_piv
 	def.lowerTranslation = PIXEL_TO_METERS(-50);
 	
 	def.enableMotor = true;
-	def.maxMotorForce = 500;
-	def.motorSpeed = PIXEL_TO_METERS(-200);
-
-	bodies.add(pbody2);
+	def.maxMotorForce = 150;
+	def.motorSpeed = PIXEL_TO_METERS(300);
 
 	(b2PrismaticJoint*)world->CreateJoint(&def);
 }
 
-void ModulePhysics::ApplyForceJ(int force)
-{
-	b2Vec2 forcev(0, force);
-
-	bodies.getFirst()->data->body->ApplyForce(forcev, bodies.getFirst()->data->body->GetWorldCenter(),true);
-}
-
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangle(body_type type, int x, int y, int width, int height)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+
+	switch (type)
+	{
+	case b_static:
+		body.type = b2_staticBody;
+		break;
+
+	case b_kinematic:
+		body.type = b2_kinematicBody;
+		break;
+
+	default:
+		body.type = b2_dynamicBody;
+		break;
+	}
+
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);

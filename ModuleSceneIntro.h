@@ -24,7 +24,9 @@ public:
 	p2List<PhysBody*> board;
 
 	PhysBody* sensor;
-	PhysBody* p_joint;
+	PhysBody* box_t;
+	PhysBody* anc_c;
+
 	bool sensed;
 
 	SDL_Texture* circle;

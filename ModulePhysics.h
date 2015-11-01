@@ -30,6 +30,13 @@ public:
 	Module* listener;
 };
 
+enum body_type
+{
+	b_dynamic,
+	b_static,
+	b_kinematic
+};
+
 // Module --------------------------------------
 class ModulePhysics : public Module, public b2ContactListener // TODO
 {
@@ -42,8 +49,8 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius);
-	PhysBody* CreateRectangle(int x, int y, int width, int height);
+	PhysBody* CreateCircle(body_type b_dynamic, int x, int y, int radius);
+	PhysBody* CreateRectangle(body_type b_dynamic, int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, int* points, int size);
 	PhysBody* CreateBoard(int x, int y, int *points, int size);
@@ -51,13 +58,11 @@ public:
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
 
-	void CreatePrismaticJoint(int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis);
-	void ApplyForceJ(int force);
+	void CreatePrismaticJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis);
 
 private:
 
 	bool debug;
-	p2List<PhysBody*> bodies;
 	b2World* world;
 	b2MouseJoint* mouse_joint;
 	b2Body* ground;

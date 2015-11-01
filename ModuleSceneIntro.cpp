@@ -49,7 +49,9 @@ bool ModuleSceneIntro::Start()
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 10);
 
-	App->physics->CreatePrismaticJoint(0, 0, 0, 0, 0, 1);
+	anc_c = App->physics->CreateCircle(b_static, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4);
+	box_t = App->physics->CreateRectangle(b_dynamic, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 20, 40);
+	App->physics->CreatePrismaticJoint(anc_c, box_t, 0, 0, 0, 0, 0, -1);
 
 	return ret;
 }
@@ -65,6 +67,7 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
+	static float spring_push = 0.0f;
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
 		ray_on = !ray_on;
@@ -74,19 +77,19 @@ update_status ModuleSceneIntro::Update()
 
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 10));
+		circles.add(App->physics->CreateCircle(b_dynamic, App->input->GetMouseX(), App->input->GetMouseY(), 10));
 		circles.getLast()->data->listener = this;
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
-		boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
+		boxes.add(App->physics->CreateRectangle(b_dynamic, App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
 	}	
 
-	if (App->input->GetKey(SDL_SCANCODE_3) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		LOG("Appling force")
-		App->physics->ApplyForceJ(-600);
+		spring_push += 175.f;
+		box_t->body->ApplyForceToCenter(b2Vec2(0, spring_push), true);
 	}
 	
 	
