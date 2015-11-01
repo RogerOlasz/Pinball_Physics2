@@ -114,6 +114,24 @@ PhysBody* ModulePhysics::CreateCircle(body_type type, int x, int y, int radius)
 	return pbody;
 }
 
+void ModulePhysics::CreateDistanceJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, float frequency, float damping)
+{
+	b2DistanceJointDef def;
+
+	def.bodyA = body_1->body;
+	def.bodyB = body_2->body;
+	def.collideConnected = false;
+	def.length = 0.f;
+
+	def.localAnchorA.Set(PIXEL_TO_METERS(x_pivot_1), PIXEL_TO_METERS(y_pivot_1));
+	def.localAnchorB.Set(PIXEL_TO_METERS(x_pivot_2), PIXEL_TO_METERS(y_pivot_2));
+
+	def.dampingRatio = damping; // 0 ... 1
+	def.frequencyHz = frequency; // < 30.0f
+
+	world->CreateJoint(&def);
+}
+
 void ModulePhysics::CreatePrismaticJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis)
 {
 	b2PrismaticJointDef def;
@@ -128,13 +146,13 @@ void ModulePhysics::CreatePrismaticJoint(PhysBody* body_1, PhysBody* body_2, int
 	def.localAnchorA.Set(PIXEL_TO_METERS(x_pivot_1), PIXEL_TO_METERS(y_pivot_1));
 	def.localAnchorB.Set(PIXEL_TO_METERS(x_pivot_2), PIXEL_TO_METERS(y_pivot_2));
 
-	def.enableLimit = true;
-	def.upperTranslation = PIXEL_TO_METERS(50);
-	def.lowerTranslation = PIXEL_TO_METERS(-50);
+	/*def.enableLimit = true;
+	def.upperTranslation = PIXEL_TO_METERS(100);
+	def.lowerTranslation = PIXEL_TO_METERS(-30);*/
 	
-	def.enableMotor = true;
-	def.maxMotorForce = 150;
-	def.motorSpeed = PIXEL_TO_METERS(300);
+	/*def.enableMotor = true;
+	def.maxMotorForce = 500;
+	def.motorSpeed = PIXEL_TO_METERS(600);*/
 
 	(b2PrismaticJoint*)world->CreateJoint(&def);
 }

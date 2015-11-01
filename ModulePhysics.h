@@ -59,6 +59,7 @@ public:
 	void BeginContact(b2Contact* contact);
 
 	void CreatePrismaticJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, int x_axis, int y_axis);
+	void CreateDistanceJoint(PhysBody* body_1, PhysBody* body_2, int x_pivot_1, int y_pivot_1, int x_pivot_2, int y_pivot_2, float frequency, float damping);
 
 private:
 

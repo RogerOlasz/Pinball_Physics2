@@ -49,9 +49,10 @@ bool ModuleSceneIntro::Start()
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 10);
 
-	anc_c = App->physics->CreateCircle(b_static, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 4);
-	box_t = App->physics->CreateRectangle(b_dynamic, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 20, 40);
+	anc_c = App->physics->CreateCircle(b_static, 483, 699, 4);
+	box_t = App->physics->CreateRectangle(b_dynamic, 477, 685, 13, 28);
 	App->physics->CreatePrismaticJoint(anc_c, box_t, 0, 0, 0, 0, 0, -1);
+	App->physics->CreateDistanceJoint(anc_c, box_t, 0, 0, 0, 0, 20.0f, 1.0f);
 
 	return ret;
 }
@@ -88,10 +89,13 @@ update_status ModuleSceneIntro::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		spring_push += 175.f;
+		spring_push += 60.f;
 		box_t->body->ApplyForceToCenter(b2Vec2(0, spring_push), true);
 	}
-	
+	else
+	{
+		spring_push = 0.0f;
+	}
 	
 	App->renderer->Blit(img, 0, 0);
 
